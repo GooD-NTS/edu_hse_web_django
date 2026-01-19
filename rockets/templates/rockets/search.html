@@ -1,0 +1,125 @@
+{% extends 'rockets/base.html' %}
+
+{% block title %}Поиск - РакетыИнфо{% endblock %}
+
+{% block content %}
+<h1><i class="bi bi-search"></i> Результаты поиска</h1>
+
+<form method="GET" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="query" class="form-control form-control-lg" 
+               value="{{ query }}" placeholder="Введите запрос для поиска...">
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="bi bi-search"></i> Искать
+        </button>
+    </div>
+</form>
+
+{% if query %}
+    <p class="text-muted">Результаты поиска по запросу: "{{ query }}"</p>
+    
+    {% if rockets %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5><i class="bi bi-rocket"></i> Ракеты ({{ rockets|length }})</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Производитель</th>
+                            <th>Страна</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rocket in rockets %}
+                        <tr>
+                            <td><a href="{% url 'rocket_detail' rocket.pk %}">{{ rocket.name }}</a></td>
+                            <td>{{ rocket.manufacturer }}</td>
+                            <td>{{ rocket.country }}</td>
+                            <td>{{ rocket.get_status_display }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if cosmodromes %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5><i class="bi bi-building"></i> Космодромы ({{ cosmodromes|length }})</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Страна</th>
+                            <th>Местоположение</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cosmodrome in cosmodromes %}
+                        <tr>
+                            <td><a href="{% url 'cosmodrome_detail' cosmodrome.pk %}">{{ cosmodrome.name }}</a></td>
+                            <td>{{ cosmodrome.country }}</td>
+                            <td>{{ cosmodrome.location }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if launches %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5><i class="bi bi-calendar-event"></i> Запуски ({{ launches|length }})</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Миссия</th>
+                            <th>Ракета</th>
+                            <th>Космодром</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for launch in launches %}
+                        <tr>
+                            <td><a href="{% url 'launch_detail' launch.pk %}">{{ launch.mission_name }}</a></td>
+                            <td>{{ launch.rocket.name }}</td>
+                            <td>{{ launch.cosmodrome.name }}</td>
+                            <td>{{ launch.launch_date|date:"d.m.Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if not rockets and not cosmodromes and not launches %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> По вашему запросу ничего не найдено.
+        </div>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Введите запрос для поиска по ракетам, космодромам и запускам.
+    </div>
+{% endif %}
+{% endblock %}

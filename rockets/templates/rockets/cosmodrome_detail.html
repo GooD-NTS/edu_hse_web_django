@@ -1,0 +1,96 @@
+{% extends 'rockets/base.html' %}
+
+{% block title %}{{ cosmodrome.name }} - РакетыИнфо{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'cosmodrome_list' %}">Космодромы</a></li>
+        <li class="breadcrumb-item active">{{ cosmodrome.name }}</li>
+    </ol>
+</nav>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-building"></i> {{ cosmodrome.name }}</h2>
+        <div>
+            <a href="{% url 'cosmodrome_edit' cosmodrome.pk %}" class="btn btn-outline-light">
+                <i class="bi bi-pencil"></i> Редактировать
+            </a>
+            <a href="{% url 'cosmodrome_delete' cosmodrome.pk %}" class="btn btn-outline-danger">
+                <i class="bi bi-trash"></i> Удалить
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table">
+                    <tr>
+                        <th>Страна:</th>
+                        <td>{{ cosmodrome.country }}</td>
+                    </tr>
+                    <tr>
+                        <th>Местоположение:</th>
+                        <td>{{ cosmodrome.location }}</td>
+                    </tr>
+                    <tr>
+                        <th>Год основания:</th>
+                        <td>{{ cosmodrome.founded_year|default:"Н/Д" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Статус:</th>
+                        <td>
+                            {% if cosmodrome.is_active %}
+                                <span class="badge bg-success">Действующий</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Закрыт</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        {% if cosmodrome.description %}
+        <div class="mt-3">
+            <h5>Описание</h5>
+            <p>{{ cosmodrome.description }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if launches %}
+<div class="card">
+    <div class="card-header">
+        <h5><i class="bi bi-calendar-event"></i> Запуски с этого космодрома</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Миссия</th>
+                        <th>Ракета</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for launch in launches %}
+                    <tr>
+                        <td><a href="{% url 'launch_detail' launch.pk %}">{{ launch.mission_name }}</a></td>
+                        <td>{{ launch.rocket.name }}</td>
+                        <td>{{ launch.launch_date|date:"d.m.Y H:i" }}</td>
+                        <td>{{ launch.get_status_display }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

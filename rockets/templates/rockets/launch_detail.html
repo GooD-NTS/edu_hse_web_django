@@ -1,0 +1,84 @@
+{% extends 'rockets/base.html' %}
+
+{% block title %}{{ launch.mission_name }} - РакетыИнфо{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'launch_list' %}">Запуски</a></li>
+        <li class="breadcrumb-item active">{{ launch.mission_name }}</li>
+    </ol>
+</nav>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-calendar-event"></i> {{ launch.mission_name }}</h2>
+        <div>
+            <a href="{% url 'launch_edit' launch.pk %}" class="btn btn-outline-light">
+                <i class="bi bi-pencil"></i> Редактировать
+            </a>
+            <a href="{% url 'launch_delete' launch.pk %}" class="btn btn-outline-danger">
+                <i class="bi bi-trash"></i> Удалить
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table">
+                    <tr>
+                        <th>Ракета:</th>
+                        <td><a href="{% url 'rocket_detail' launch.rocket.pk %}">{{ launch.rocket.name }}</a></td>
+                    </tr>
+                    <tr>
+                        <th>Космодром:</th>
+                        <td><a href="{% url 'cosmodrome_detail' launch.cosmodrome.pk %}">{{ launch.cosmodrome.name }}</a></td>
+                    </tr>
+                    <tr>
+                        <th>Дата и время:</th>
+                        <td>{{ launch.launch_date|date:"d.m.Y H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Статус:</th>
+                        <td>
+                            {% if launch.status == 'success' %}
+                                <span class="badge bg-success">{{ launch.get_status_display }}</span>
+                            {% elif launch.status == 'failure' %}
+                                <span class="badge bg-danger">{{ launch.get_status_display }}</span>
+                            {% elif launch.status == 'partial' %}
+                                <span class="badge bg-warning text-dark">{{ launch.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ launch.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table">
+                    <tr>
+                        <th>Полезная нагрузка:</th>
+                        <td>{{ launch.payload|default:"Н/Д" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Орбита:</th>
+                        <td>{{ launch.orbit|default:"Н/Д" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Добавлено:</th>
+                        <td>{{ launch.created_at|date:"d.m.Y H:i" }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        {% if launch.description %}
+        <div class="mt-3">
+            <h5>Описание миссии</h5>
+            <p>{{ launch.description }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

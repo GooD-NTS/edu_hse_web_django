@@ -1,0 +1,126 @@
+{% extends 'rockets/base.html' %}
+
+{% block title %}{{ rocket.name }} - РакетыИнфо{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'rocket_list' %}">Ракеты</a></li>
+        <li class="breadcrumb-item active">{{ rocket.name }}</li>
+    </ol>
+</nav>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-rocket"></i> {{ rocket.name }}</h2>
+        <div>
+            <a href="{% url 'rocket_edit' rocket.pk %}" class="btn btn-outline-light">
+                <i class="bi bi-pencil"></i> Редактировать
+            </a>
+            <a href="{% url 'rocket_delete' rocket.pk %}" class="btn btn-outline-danger">
+                <i class="bi bi-trash"></i> Удалить
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table">
+                    <tr>
+                        <th>Производитель:</th>
+                        <td>{{ rocket.manufacturer }}</td>
+                    </tr>
+                    <tr>
+                        <th>Страна:</th>
+                        <td>{{ rocket.country }}</td>
+                    </tr>
+                    <tr>
+                        <th>Тип ракеты:</th>
+                        <td>{{ rocket.get_rocket_type_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>Статус:</th>
+                        <td>
+                            {% if rocket.status == 'active' %}
+                                <span class="badge bg-success">{{ rocket.get_status_display }}</span>
+                            {% elif rocket.status == 'retired' %}
+                                <span class="badge bg-secondary">{{ rocket.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ rocket.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Первый полёт:</th>
+                        <td>{{ rocket.first_flight_year|default:"Н/Д" }} г.</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table">
+                    <tr>
+                        <th>Высота:</th>
+                        <td>{{ rocket.height|default:"Н/Д" }} м</td>
+                    </tr>
+                    <tr>
+                        <th>Диаметр:</th>
+                        <td>{{ rocket.diameter|default:"Н/Д" }} м</td>
+                    </tr>
+                    <tr>
+                        <th>Масса:</th>
+                        <td>{{ rocket.mass|default:"Н/Д" }} т</td>
+                    </tr>
+                    <tr>
+                        <th>Полезная нагрузка на НОО:</th>
+                        <td>{{ rocket.payload_to_leo|default:"Н/Д" }} кг</td>
+                    </tr>
+                    <tr>
+                        <th>Количество ступеней:</th>
+                        <td>{{ rocket.stages }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        {% if rocket.description %}
+        <div class="mt-3">
+            <h5>Описание</h5>
+            <p>{{ rocket.description }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if launches %}
+<div class="card">
+    <div class="card-header">
+        <h5><i class="bi bi-calendar-event"></i> Запуски с этой ракетой</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Миссия</th>
+                        <th>Космодром</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for launch in launches %}
+                    <tr>
+                        <td><a href="{% url 'launch_detail' launch.pk %}">{{ launch.mission_name }}</a></td>
+                        <td>{{ launch.cosmodrome.name }}</td>
+                        <td>{{ launch.launch_date|date:"d.m.Y H:i" }}</td>
+                        <td>{{ launch.get_status_display }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

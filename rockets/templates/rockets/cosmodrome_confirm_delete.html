@@ -1,0 +1,27 @@
+{% extends 'rockets/base.html' %}
+
+{% block title %}Удаление космодрома - РакетыИнфо{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h2>
+    </div>
+    <div class="card-body">
+        <p>Вы действительно хотите удалить космодром <strong>{{ cosmodrome.name }}</strong>?</p>
+        <p class="text-danger">Это действие нельзя отменить. Все связанные запуски также будут удалены!</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
+                <a href="{% url 'cosmodrome_detail' cosmodrome.pk %}" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

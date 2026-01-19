@@ -1,0 +1,147 @@
+{% extends 'rockets/base.html' %}
+
+{% block title %}Главная - РакетыИнфо{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1><i class="bi bi-rocket-takeoff"></i> Добро пожаловать в РакетыИнфо</h1>
+    <p class="lead">Информационный портал о космических ракетах, космодромах и запусках</p>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="stat-card">
+            <i class="bi bi-rocket" style="font-size: 2rem;"></i>
+            <div class="stat-number">{{ rockets_count }}</div>
+            <div>Ракет</div>
+            <a href="{% url 'rocket_list' %}" class="btn btn-primary btn-sm mt-2">Перейти</a>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stat-card">
+            <i class="bi bi-building" style="font-size: 2rem;"></i>
+            <div class="stat-number">{{ cosmodromes_count }}</div>
+            <div>Космодромов</div>
+            <a href="{% url 'cosmodrome_list' %}" class="btn btn-primary btn-sm mt-2">Перейти</a>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stat-card">
+            <i class="bi bi-calendar-event" style="font-size: 2rem;"></i>
+            <div class="stat-number">{{ launches_count }}</div>
+            <div>Запусков</div>
+            <a href="{% url 'launch_list' %}" class="btn btn-primary btn-sm mt-2">Перейти</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-bar-chart-fill"></i> Статистика запусков</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="p-3 rounded" style="background: rgba(40, 167, 69, 0.2);">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 1.5rem;"></i>
+                            <div class="stat-number text-success">{{ success_count }}</div>
+                            <div>Успешных</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="p-3 rounded" style="background: rgba(23, 162, 184, 0.2);">
+                            <i class="bi bi-calendar-check text-info" style="font-size: 1.5rem;"></i>
+                            <div class="stat-number text-info">{{ planned_count }}</div>
+                            <div>Запланировано</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="p-3 rounded" style="background: rgba(255, 193, 7, 0.2);">
+                            <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 1.5rem;"></i>
+                            <div class="stat-number text-warning">{{ partial_count }}</div>
+                            <div>Частично успешных</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="p-3 rounded" style="background: rgba(220, 53, 69, 0.2);">
+                            <i class="bi bi-x-circle-fill text-danger" style="font-size: 1.5rem;"></i>
+                            <div class="stat-number text-danger">{{ failure_count }}</div>
+                            <div>Неудачных</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-clock-history"></i> Последние запуски</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_launches %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Миссия</th>
+                                    <th>Ракета</th>
+                                    <th>Дата</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for launch in recent_launches %}
+                                <tr>
+                                    <td><a href="{% url 'launch_detail' launch.pk %}">{{ launch.mission_name }}</a></td>
+                                    <td>{{ launch.rocket.name }}</td>
+                                    <td>{{ launch.launch_date|date:"d.m.Y H:i" }}</td>
+                                    <td>
+                                        {% if launch.status == 'success' %}
+                                            <span class="badge badge-success">Успешный</span>
+                                        {% elif launch.status == 'failure' %}
+                                            <span class="badge badge-danger">Неудачный</span>
+                                        {% elif launch.status == 'partial' %}
+                                            <span class="badge badge-warning">Частично успешный</span>
+                                        {% else %}
+                                            <span class="badge badge-info">Запланирован</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Пока нет записей о запусках.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-plus-circle"></i> Быстрые действия</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'rocket_create' %}" class="btn btn-primary">
+                        <i class="bi bi-rocket"></i> Добавить ракету
+                    </a>
+                    <a href="{% url 'cosmodrome_create' %}" class="btn btn-primary">
+                        <i class="bi bi-building"></i> Добавить космодром
+                    </a>
+                    <a href="{% url 'launch_create' %}" class="btn btn-primary">
+                        <i class="bi bi-calendar-plus"></i> Добавить запуск
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

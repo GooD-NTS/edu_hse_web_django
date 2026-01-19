@@ -1,0 +1,68 @@
+{% extends 'rockets/base.html' %}
+
+{% block title %}{{ title }} - РакетыИнфо{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'cosmodrome_list' %}">Космодромы</a></li>
+        <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        <h2><i class="bi bi-building"></i> {{ title }}</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.name.id_for_label }}" class="form-label">Название *</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="text-danger">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.country.id_for_label }}" class="form-label">Страна *</label>
+                    {{ form.country }}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="{{ form.location.id_for_label }}" class="form-label">Местоположение *</label>
+                    {{ form.location }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ form.founded_year.id_for_label }}" class="form-label">Год основания</label>
+                    {{ form.founded_year }}
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.description.id_for_label }}" class="form-label">Описание</label>
+                {{ form.description }}
+            </div>
+            
+            <div class="mb-3 form-check">
+                {{ form.is_active }}
+                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">Действующий космодром</label>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Сохранить
+                </button>
+                <a href="{% url 'cosmodrome_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
